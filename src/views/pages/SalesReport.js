@@ -97,7 +97,7 @@ function SalesReport() {
     setDatewiseSales([])
 
     try {
-      const response = await axios.post('/admin/customer/sales-report/datewise', {
+      const response = await api.post('/admin/customer/sales-report/datewise', {
         vendorId,
         customerId,
         startDate,
@@ -120,10 +120,13 @@ function SalesReport() {
     setExpandedItems((prev) => ({ ...prev, [index]: !isOpen }))
     if (!isOpen && !detailedSales[productId]) {
       try {
-        const response = await axios.post(
-          'http://localhost:3000/api/admin/customer/sales-report/date',
-          { vendorId, customerId, productId, startDate, endDate },
-        )
+        const response = await api.post('/admin/customer/sales-report/date', {
+          vendorId,
+          customerId,
+          productId,
+          startDate,
+          endDate,
+        })
         setDetailedSales((prev) => ({
           ...prev,
           [productId]: response.data.sales || [],
