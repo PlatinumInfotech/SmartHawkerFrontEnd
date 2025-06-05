@@ -14,6 +14,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import api from '../../services/useApi'
 
 function CustomerList() {
   const [customers, setCustomers] = useState([])
@@ -22,7 +23,7 @@ function CustomerList() {
 
   const fetchMonthlySales = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/admin/customer-list/${vendorId}`)
+      const response = await api.get(`/admin/customer-list/${vendorId}`)
 
       console.log(response.data.data)
       setCustomers(response.data.data)

@@ -11,6 +11,7 @@ import {
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../../services/useApi'
 
 function VendorList() {
   const [vendors, setVendors] = useState([])
@@ -23,8 +24,8 @@ function VendorList() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3000/api/admin/vendor-list')
+    api
+      .get('/admin/vendor-list')
       .then((response) => {
         setVendors(response.data.data)
       })

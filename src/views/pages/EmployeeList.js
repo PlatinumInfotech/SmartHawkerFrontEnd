@@ -13,14 +13,15 @@ import { AppHeader, AppSidebar } from '../../components'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import api from '../../services/useApi'
 
 function EmployeeList() {
   const [employees, setEmployees] = useState([])
   const { vendorId } = useParams()
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/api/admin/employee-list/${vendorId}`)
+    api
+      .get(`/admin/employee-list/${vendorId}`)
       .then((response) => {
         console.log(response.data.data, 'Hello')
         setEmployees(response.data.data)

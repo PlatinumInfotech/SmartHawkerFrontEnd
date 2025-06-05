@@ -17,6 +17,8 @@ import {
   CSpinner,
 } from '@coreui/react'
 
+import api from '../../services/useApi'
+
 function SalesReport() {
   const { vendorId, customerId } = useParams()
   const location = useLocation()
@@ -67,10 +69,12 @@ function SalesReport() {
     setSales([])
 
     try {
-      const response = await axios.post(
-        'http://localhost:3000/api/admin/customer/sales/product-summary',
-        { vendorId, customerId, month, year },
-      )
+      const response = await api.post('/admin/customer/sales/product-summary', {
+        vendorId,
+        customerId,
+        month,
+        year,
+      })
       const summary = response.data.summary
       setSales(summary)
       setTotalExpenses(summary.reduce((sum, item) => sum + parseFloat(item.total_sales_amount), 0))
@@ -93,10 +97,12 @@ function SalesReport() {
     setDatewiseSales([])
 
     try {
-      const response = await axios.post(
-        'http://localhost:3000/api/admin/customer/sales-report/datewise',
-        { vendorId, customerId, startDate, endDate },
-      )
+      const response = await axios.post('/admin/customer/sales-report/datewise', {
+        vendorId,
+        customerId,
+        startDate,
+        endDate,
+      })
       setDatewiseSales(response.data.summary)
       setTotalExpenses(
         response.data.summary.reduce((sum, item) => sum + parseFloat(item.total_sales_amount), 0),
@@ -132,43 +138,9 @@ function SalesReport() {
     <div className="p-4">
       <h2 className="text-3xl font-bold text-white mb-6">Sales Report of {customerName}</h2>
 
-      <div className="flex gap-4 mb-4">
-        <CFormSelect
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
-          className="w-1/3 font-bold bg-white text-black"
-        >
-          <option value="">Month</option>
-          {months.map((m, idx) => (
-            <option key={idx + 1} value={idx + 1}>
-              {m}
-            </option>
-          ))}
-        </CFormSelect>
-
-        <CFormSelect
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
-          className="w-1/3 font-bold bg-white text-black"
-        >
-          <option value="">Year</option>
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </CFormSelect>
-      </div>
-
-      <div className="text-center mb-5">
-        <CButton color="success" onClick={fetchSalesReport} disabled={monthlyLoading}>
-          {monthlyLoading ? <CSpinner size="sm" color="light" /> : 'Generate Report'}
-        </CButton>
-      </div>
-
       {/* ----- Date-wise Section ----- */}
       <div className="border-t border-gray-300 pt-6 mt-6">
-        <h3 className="text-xl font-bold text-white mb-4">Or Get Report by Date Range</h3>
+        <h3 className="text-xl font-bold text-white mb-4"></h3>
 
         <div className="flex justify-between gap-4 mb-4 w-full">
           {/* Start Date */}

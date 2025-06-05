@@ -12,14 +12,15 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import api from '../../services/useApi'
 
 function ProductList() {
   const [products, setProducts] = useState([])
   const { vendorId } = useParams()
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/api/admin/product-list/${vendorId}`)
+    api
+      .get(`/admin/product-list/${vendorId}`)
       .then((response) => {
         console.log(response.data.data, 'Hello')
         setProducts(response.data.data)
