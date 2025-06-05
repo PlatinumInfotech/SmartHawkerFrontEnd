@@ -15,6 +15,7 @@ import { CChartBar, CChartLine } from '@coreui/react-chartjs'
 import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 import axios from 'axios'
+import api from '../../services/useApi'
 
 const WidgetsDropdown = (props) => {
   const widgetChartRef1 = useRef(null)
@@ -41,8 +42,8 @@ const WidgetsDropdown = (props) => {
   }, [widgetChartRef1, widgetChartRef2])
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3000/api/admin/dashboard/summary')
+    api
+      .get('/admin/dashboard/summary')
       .then((response) => {
         console.log(response.data, 'Hello')
         setData(response.data)
