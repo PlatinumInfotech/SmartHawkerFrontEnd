@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
+
 import {
   CButton,
   CCard,
@@ -19,7 +20,8 @@ import { useAuth } from '../../../context/AuthContext'
 import api from '../../../../src/services/useApi'
 
 const Login = () => {
-  const [formData, setFormData] = useState({ username: '', password: '' })
+  const [formData, setFormData] = useState({ email: '', password: '' })
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -27,13 +29,22 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  // if (localStorage.getItem('isAuthenticated') === 'true') {
+  //   return <Navigate to="/dashboard" />
+  // }
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const success = await api.post('/admin/login', formData)
-    if (success) {
-      navigate('/')
-    } else {
-      setError('Invalid credentials')
+    try {
+      const res = await api.post('/admin/login', formData)
+      if (!res.data.error) {
+        localStorage.setItem('token', res.data.token)
+        navigate('/dashboard')
+      } else {
+        navigate('/login');
+      }
+    } catch (error) {
+      alert('Login failed')
+      console.error(error)
     }
   }
 

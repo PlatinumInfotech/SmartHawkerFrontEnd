@@ -402,16 +402,16 @@ const _nav = [
     name: 'Pages',
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
     items: [
-      {
-        component: CNavItem,
-        name: 'Login',
-        to: '/login',
-      },
-      {
-        component: CNavItem,
-        name: 'Register',
-        to: '/register',
-      },
+      // {
+      //   component: CNavItem,
+      //   name: 'Login',
+      //   to: '/login',
+      // },
+      // {
+      //   component: CNavItem,
+      //   name: 'Register',
+      //   to: '/register',
+      // },
       {
         component: CNavItem,
         name: 'Vendor List',
@@ -439,12 +439,12 @@ const _nav = [
       // },
     ],
   },
-  {
-    component: CNavItem,
-    name: 'Docs',
-    href: 'https://coreui.io/react/docs/templates/installation/',
-    icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
-  },
+  // {
+  //   component: CNavItem,
+  //   name: 'Docs',
+  //   href: 'https://coreui.io/react/docs/templates/installation/',
+  //   icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
+  // },
 ]
 
 export default _nav
