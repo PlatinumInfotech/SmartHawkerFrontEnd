@@ -19,7 +19,7 @@ function VendorList() {
     name: '',
     email: '',
     mobile: '',
-    status: '',
+    status: 'active',
   })
   const navigate = useNavigate()
 
@@ -123,9 +123,7 @@ function VendorList() {
                   color: filters.status === '' ? '#6c757d' : 'inherit', // gray if "All"
                 }}
               >
-                <option value="" disabled hidden>
-                  All
-                </option>
+
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
@@ -147,6 +145,7 @@ function VendorList() {
             <CTableHeaderCell scope="col">Address</CTableHeaderCell>
             <CTableHeaderCell scope="col">Business_name</CTableHeaderCell>
             <CTableHeaderCell scope="col">Status</CTableHeaderCell>
+            <CTableHeaderCell scope="col">TodaySales</CTableHeaderCell>
             <CTableHeaderCell scope="col">Action</CTableHeaderCell>
           </CTableRow>
         </CTableHead>
@@ -168,7 +167,11 @@ function VendorList() {
               >
                 {vendor.vendor_status}
               </CTableDataCell>
-              <CTableDataCell className="d-flex align-items-center gap-2">
+              <CTableDataCell>
+                ₹{parseFloat(vendor.today_sales_amount || 0).toFixed(2)}
+              </CTableDataCell>
+
+              <CTableDataCell className="flex gap-2">
                 <CButton
                   color="primary"
                   size="sm"
