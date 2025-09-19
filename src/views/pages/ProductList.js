@@ -6,17 +6,17 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import React from 'react'
-import { AppHeader, AppSidebar } from '../../components'
-import DefaultLayout from '../../layout/DefaultLayout'
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useParams, useLocation } from 'react-router-dom'
 import api from '../../services/useApi'
 
 function ProductList() {
   const [products, setProducts] = useState([])
   const { vendorId } = useParams()
+  const location = useLocation()
+
+  // ✅ Business name from state
+  const businessName = location.state?.businessName || 'Business Name'
 
   useEffect(() => {
     api
@@ -26,13 +26,19 @@ function ProductList() {
         setProducts(response.data.data)
       })
       .catch((error) => {
-        setError(error.message)
+        console.error(error.message)
       })
-  }, [])
+  }, [vendorId])
+
   return (
     <>
-      <div>
-        <CTable>
+      <div style={{ padding: '20px' }}>
+        {/* ✅ Business Name Heading */}
+        <h3 style={{ marginBottom: '20px', fontWeight: 'bold', color: '#333' }}>
+          Product List - {businessName}
+        </h3>
+
+        <CTable bordered hover responsive>
           <CTableHead color="light">
             <CTableRow>
               <CTableHeaderCell scope="col">#</CTableHeaderCell>
@@ -43,14 +49,13 @@ function ProductList() {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {products.map((products, index) => (
-              <CTableRow key={products?.products_id}>
+            {products.map((product, index) => (
+              <CTableRow key={product?.products_id}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                <CTableDataCell>{products?.product_name}</CTableDataCell>
-                <CTableDataCell>{products?.product_price_per_unit}</CTableDataCell>
-                <CTableDataCell>{products?.product_unit}</CTableDataCell>
-
-                <CTableDataCell className="flex gap-2"></CTableDataCell>
+                <CTableDataCell>{product?.product_name}</CTableDataCell>
+                <CTableDataCell>{product?.product_price_per_unit}</CTableDataCell>
+                <CTableDataCell>{product?.product_unit}</CTableDataCell>
+                <CTableDataCell>{product?.product_status}</CTableDataCell>
               </CTableRow>
             ))}
           </CTableBody>

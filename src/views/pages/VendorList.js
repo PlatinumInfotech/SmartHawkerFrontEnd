@@ -6,20 +6,21 @@ import {
   CTableHeaderCell,
   CTableRow,
   CButton,
+  CTooltip,
 } from '@coreui/react'
 
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../services/useApi'
 
+// ✅ Import icons from react-icons
+import { FaUsers, FaUser, FaBox } from 'react-icons/fa'
+
 function VendorList() {
   const [vendors, setVendors] = useState([])
   const [filters, setFilters] = useState({
-    name: '',
-    email: '',
-    mobile: '',
-    status: 'active',
+    search: '',
+    status: 'active', // ✅ Default Active
   })
   const navigate = useNavigate()
 
@@ -40,100 +41,74 @@ function VendorList() {
   }
 
   const filteredVendors = vendors.filter((vendor) => {
+    const searchLower = filters.search.toLowerCase()
     return (
-      vendor.vendor_name.toLowerCase().includes(filters.name.toLowerCase()) &&
-      vendor.vendor_email.toLowerCase().includes(filters.email.toLowerCase()) &&
-      vendor.vendor_mobile.includes(filters.mobile) &&
-      (filters.status === '' || vendor.vendor_status.toLowerCase() === filters.status)
+      (vendor.vendor_name?.toLowerCase().includes(searchLower) ||
+        vendor.vendor_email?.toLowerCase().includes(searchLower) ||
+        vendor.vendor_mobile?.includes(searchLower)) &&
+      (filters.status === '' ||
+        vendor.vendor_status.toLowerCase() === filters.status)
     )
   })
 
   return (
     <>
       <CTable>
-        {/* Filter Row - Above Header */}
+        {/* 🔎 Filter Row */}
         <CTableHead>
           <CTableRow>
-            <CTableHeaderCell />
-            <CTableHeaderCell>
-              <input
-                type="text"
-                name="name"
-                value={filters.name}
-                onChange={handleFilterChange}
-                placeholder="Search name"
+            <CTableHeaderCell colSpan={9}>
+              <div
                 style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  fontSize: '1rem',
-                  backgroundColor: '#e8f0fe', // light blue for contrast
-                  border: '1px solid #a5b4fc',
-                  borderRadius: '6px',
-                }}
-              />
-            </CTableHeaderCell>
-            <CTableHeaderCell>
-              <input
-                type="text"
-                name="email"
-                value={filters.email}
-                onChange={handleFilterChange}
-                placeholder="Search email"
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  fontSize: '1rem',
-                  backgroundColor: '#e8f0fe',
-                  border: '1px solid #a5b4fc',
-                  borderRadius: '6px',
-                }}
-              />
-            </CTableHeaderCell>
-            <CTableHeaderCell>
-              <input
-                type="text"
-                name="mobile"
-                value={filters.mobile}
-                onChange={handleFilterChange}
-                placeholder="Search mobile"
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  fontSize: '1rem',
-                  backgroundColor: '#e8f0fe',
-                  border: '1px solid #a5b4fc',
-                  borderRadius: '6px',
-                }}
-              />
-            </CTableHeaderCell>
-            <CTableHeaderCell />
-            <CTableHeaderCell />
-            <CTableHeaderCell>
-              <select
-                name="status"
-                value={filters.status}
-                onChange={handleFilterChange}
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  fontSize: '1rem',
-                  backgroundColor: '#e8f0fe',
-                  border: '1px solid #a5b4fc',
-                  borderRadius: '6px',
-                  color: filters.status === '' ? '#6c757d' : 'inherit', // gray if "All"
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  padding: '8px 0',
                 }}
               >
+                {/* Search Input */}
+                <input
+                  type="text"
+                  name="search"
+                  value={filters.search}
+                  onChange={handleFilterChange}
+                  placeholder="🔍 Search by name, email or mobile"
+                  style={{
+                    flex: 1,
+                    padding: '10px 14px',
+                    fontSize: '1rem',
+                    backgroundColor: '#f9fafb',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    outline: 'none',
+                  }}
+                />
 
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-
+                {/* Status Dropdown */}
+                <select
+                  name="status"
+                  value={filters.status}
+                  onChange={handleFilterChange}
+                  style={{
+                    minWidth: '180px',
+                    padding: '10px 14px',
+                    fontSize: '1rem',
+                    backgroundColor: '#f9fafb',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    outline: 'none',
+                    color: filters.status === '' ? '#6c757d' : 'inherit',
+                  }}
+                >
+                  <option value="">All</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
             </CTableHeaderCell>
-            <CTableHeaderCell />
           </CTableRow>
         </CTableHead>
-
-
 
         {/* Column Header */}
         <CTableHead color="light">
@@ -146,14 +121,16 @@ function VendorList() {
             <CTableHeaderCell scope="col">Business_name</CTableHeaderCell>
             <CTableHeaderCell scope="col">Status</CTableHeaderCell>
             <CTableHeaderCell scope="col">TodaySales</CTableHeaderCell>
-            <CTableHeaderCell scope="col">Action</CTableHeaderCell>
+            <CTableHeaderCell scope="col" style={{ paddingLeft: '30px' }}>
+              Action
+            </CTableHeaderCell>
           </CTableRow>
         </CTableHead>
 
         {/* Table Body */}
         <CTableBody>
           {filteredVendors.map((vendor, index) => (
-            <CTableRow key={vendor.vendor_id}>
+            <CTableRow key={vendor.vendor_id} style={{ fontSize: '0.9rem' }}>
               <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
               <CTableDataCell>{vendor.vendor_name}</CTableDataCell>
               <CTableDataCell>{vendor.vendor_email}</CTableDataCell>
@@ -162,7 +139,9 @@ function VendorList() {
               <CTableDataCell>{vendor.vendor_business_name}</CTableDataCell>
               <CTableDataCell
                 className={
-                  vendor.vendor_status === 'active' ? 'text-success fw-bold' : 'text-danger fw-bold'
+                  vendor.vendor_status === 'active'
+                    ? 'text-success fw-bold'
+                    : 'text-danger fw-bold'
                 }
               >
                 {vendor.vendor_status}
@@ -171,28 +150,66 @@ function VendorList() {
                 ₹{parseFloat(vendor.today_sales_amount || 0).toFixed(2)}
               </CTableDataCell>
 
-              <CTableDataCell className="flex gap-2">
-                <CButton
-                  color="primary"
-                  size="sm"
-                  onClick={() => navigate(`/Employee-list/${vendor.vendor_id}`)}
-                >
-                  View Employee
-                </CButton>
-                <CButton
-                  color="info"
-                  size="sm"
-                  onClick={() => navigate(`/Customer-list/${vendor.vendor_id}`)}
-                >
-                  View Customer
-                </CButton>
-                <CButton
-                  color="secondary"
-                  size="sm"
-                  onClick={() => navigate(`/Product-list/${vendor.vendor_id}`)}
-                >
-                  View Products
-                </CButton>
+              {/* ✅ Action Buttons with Tooltips */}
+              <CTableDataCell>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <CTooltip content="Employees" placement="top">
+                    <CButton
+                      color="transparent"
+                      size="sm"
+                      style={{
+                        padding: '6px',
+                        minWidth: 'auto',
+                        border: 'none',
+                      }}
+                      onClick={() =>
+                        navigate(`/Employee-list/${vendor.vendor_id}`, {
+                          state: { businessName: vendor.vendor_business_name },
+                        })
+                      }
+                    >
+                      <FaUsers size={16} color="black" />
+                    </CButton>
+                  </CTooltip>
+
+                  <CTooltip content="Customers" placement="top">
+                    <CButton
+                      color="transparent"
+                      size="sm"
+                      style={{
+                        padding: '6px',
+                        minWidth: 'auto',
+                        border: 'none',
+                      }}
+                      onClick={() =>
+                        navigate(`/Customer-list/${vendor.vendor_id}`, {
+                          state: { businessName: vendor.vendor_business_name },
+                        })
+                      }
+                    >
+                      <FaUser size={15} color="black" />
+                    </CButton>
+                  </CTooltip>
+
+                  <CTooltip content="Products" placement="top">
+                    <CButton
+                      color="transparent"
+                      size="sm"
+                      style={{
+                        padding: '6px',
+                        minWidth: 'auto',
+                        border: 'none',
+                      }}
+                      onClick={() =>
+                        navigate(`/Product-list/${vendor.vendor_id}`, {
+                          state: { businessName: vendor.vendor_business_name },
+                        })
+                      }
+                    >
+                      <FaBox size={15} color="black" />
+                    </CButton>
+                  </CTooltip>
+                </div>
               </CTableDataCell>
             </CTableRow>
           ))}

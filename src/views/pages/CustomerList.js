@@ -7,42 +7,42 @@ import {
   CTableRow,
   CButton,
 } from '@coreui/react'
-import React from 'react'
-import { AppHeader, AppSidebar } from '../../components'
-import DefaultLayout from '../../layout/DefaultLayout'
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import api from '../../services/useApi'
 
 function CustomerList() {
   const [customers, setCustomers] = useState([])
   const { vendorId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // ✅ Business name from state
+  const businessName = location.state?.businessName || 'Business Name'
 
   const fetchMonthlySales = async () => {
     try {
       const response = await api.get(`/admin/customer-list/${vendorId}`)
-
       console.log(response.data.data)
       setCustomers(response.data.data)
-      // setSalesData(response.data.sales)
-      // setTotalExpenses(response.data.totalMonthlyExpenses)
     } catch (error) {
-      console.error('Failed to fetch sales:', error.message)
-      // setError(error.message)
+      console.error('Failed to fetch customers:', error.message)
     }
   }
 
   useEffect(() => {
     fetchMonthlySales()
-  }, [])
+  }, [vendorId])
 
   return (
     <>
-      <div>
-        <CTable>
+      <div style={{ padding: '20px' }}>
+        {/* ✅ Business Name Heading */}
+        <h3 style={{ marginBottom: '20px', fontWeight: 'bold', color: '#333' }}>
+          Customer List - {businessName}
+        </h3>
+
+        <CTable bordered hover responsive>
           <CTableHead color="light">
             <CTableRow>
               <CTableHeaderCell scope="col">#</CTableHeaderCell>
@@ -54,21 +54,22 @@ function CustomerList() {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {customers.map((customers, index) => (
-              <CTableRow key={customers?.customers_id}>
+            {customers.map((customer, index) => (
+              <CTableRow key={customer?.customers_id}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                <CTableDataCell>{customers?.customer_name}</CTableDataCell>
-                <CTableDataCell>{customers?.customer_email}</CTableDataCell>
-                <CTableDataCell>{customers?.customer_mobile}</CTableDataCell>
-                <CTableDataCell>{customers?.customer_address}</CTableDataCell>
+                <CTableDataCell>{customer?.customer_name}</CTableDataCell>
+                <CTableDataCell>{customer?.customer_email}</CTableDataCell>
+                <CTableDataCell>{customer?.customer_mobile}</CTableDataCell>
+                <CTableDataCell>{customer?.customer_address}</CTableDataCell>
                 <CTableDataCell className="flex gap-2">
                   <CButton
                     color="success"
                     size="sm"
                     onClick={() =>
-                      navigate(`/sales-report/${vendorId}/${customers.customer_id}`, {
+                      navigate(`/sales-report/${vendorId}/${customer.customer_id}`, {
                         state: {
-                          customerName: customers.customer_name,
+                          customerName: customer.customer_name,
+                          businessName: businessName, // ✅ pass further
                         },
                       })
                     }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 import { useParams, useLocation } from 'react-router-dom'
 import {
   CAccordion,
@@ -12,7 +11,6 @@ import {
   CTableHeaderCell,
   CTableDataCell,
   CTableBody,
-  CFormSelect,
   CButton,
   CSpinner,
 } from '@coreui/react'
@@ -24,8 +22,6 @@ function SalesReport() {
   const location = useLocation()
   const customerName = location.state?.customerName
 
-  const [month, setMonth] = useState('')
-  const [year, setYear] = useState('')
   const [sales, setSales] = useState([])
   const [totalExpenses, setTotalExpenses] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -39,52 +35,7 @@ function SalesReport() {
   const [expandedItems, setExpandedItems] = useState({})
   const [detailedSales, setDetailedSales] = useState({})
 
-  const [monthlyLoading, setMonthlyLoading] = useState(false)
   const [datewiseLoading, setDatewiseLoading] = useState(false)
-
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ]
-  const years = Array.from({ length: 10 }, (_, i) => 2020 + i)
-
-  const fetchSalesReport = async () => {
-    if (!month || !year) {
-      setError('Please select both month and year')
-      return
-    }
-
-    setMonthlyLoading(true)
-    setError(null)
-    setSales([])
-
-    try {
-      const response = await api.post('/admin/customer/sales/product-summary', {
-        vendorId,
-        customerId,
-        month,
-        year,
-      })
-      const summary = response.data.summary
-      setSales(summary)
-      setTotalExpenses(summary.reduce((sum, item) => sum + parseFloat(item.total_sales_amount), 0))
-    } catch (err) {
-      console.error(err)
-      setError('Failed to fetch data')
-    } finally {
-      setMonthlyLoading(false)
-    }
-  }
 
   const fetchDatewiseReport = async () => {
     if (!startDate || !endDate) {
@@ -105,7 +56,10 @@ function SalesReport() {
       })
       setDatewiseSales(response.data.summary)
       setTotalExpenses(
-        response.data.summary.reduce((sum, item) => sum + parseFloat(item.total_sales_amount), 0),
+        response.data.summary.reduce(
+          (sum, item) => sum + parseFloat(item.total_sales_amount),
+          0,
+        ),
       )
     } catch (err) {
       console.error(err)
@@ -139,82 +93,103 @@ function SalesReport() {
 
   return (
     <div className="p-4">
-      <h2 className="text-3xl font-bold text-white mb-6">Sales Report of {customerName}</h2>
+      <h2 className="text-3xl font-bold text-black mb-6">
+        Sales Report of {customerName}
+      </h2>
 
       {/* ----- Date-wise Section ----- */}
       <div className="border-t border-gray-300 pt-6 mt-6">
-        <h3 className="text-xl font-bold text-white mb-4"></h3>
+        <h3 className="text-xl font-bold text-black mb-4"></h3>
 
-        <div className="flex justify-between gap-4 mb-4 w-full">
+        {/* Start Date + End Date + Button in Row */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            gap: '1rem',
+            width: '100%',
+            marginBottom: '1rem',
+          }}
+        >
           {/* Start Date */}
-          <div className="relative w-1/2">
+          <div style={{ width: '220px' }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '0.3rem',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              Start Date
+            </label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              placeholder="Start Date"
-              className="w-full font-bold bg-white text-black px-4 py-2 rounded cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onFocus={(e) => e.target.showPicker && e.target.showPicker()}
+              style={{
+                width: '100%',
+                fontWeight: 'bold',
+                backgroundColor: 'white',
+                color: 'black',
+                padding: '0.5rem 1rem',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                border: '1px solid #d1d5db',
+              }}
             />
-            {!startDate && (
-              <div className="absolute left-4 top-2 text-gray-500 pointer-events-none">
-                Start Date
-              </div>
-            )}
           </div>
 
           {/* End Date */}
-          <div className="relative w-1/2">
+          <div style={{ width: '220px' }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '0.3rem',
+                fontWeight: 'bold',
+                color: '#374151',
+              }}
+            >
+              End Date
+            </label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              placeholder="End Date"
-              className="w-full font-bold bg-white text-black px-4 py-2 rounded cursor-pointer appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onFocus={(e) => e.target.showPicker && e.target.showPicker()}
+              style={{
+                width: '100%',
+                fontWeight: 'bold',
+                backgroundColor: 'white',
+                color: 'black',
+                padding: '0.5rem 1rem',
+                borderRadius: '0.375rem',
+                cursor: 'pointer',
+                border: '1px solid #d1d5db',
+              }}
             />
-            {!endDate && (
-              <div className="absolute left-4 top-2 text-gray-500 pointer-events-none">
-                End Date
-              </div>
-            )}
+          </div>
+
+          {/* Button */}
+          <div>
+            <CButton
+              color="info"
+              className="text-white"
+              onClick={fetchDatewiseReport}
+              disabled={datewiseLoading}
+              style={{
+                whiteSpace: 'nowrap',
+                height: '42px',
+                marginTop: '1.5rem',
+              }}
+            >
+              {datewiseLoading ? (
+                <CSpinner size="sm" color="light" />
+              ) : (
+                'Generate Report'
+              )}
+            </CButton>
           </div>
         </div>
-
-        <div className="text-center mb-5">
-          <CButton color="info" onClick={fetchDatewiseReport} disabled={datewiseLoading}>
-            {datewiseLoading ? <CSpinner size="sm" color="light" /> : 'Generate Date-wise Report'}
-          </CButton>
-        </div>
-
-        {/* {datewiseError && <p className="text-red-500 text-center">{datewiseError}</p>}
-
-        {datewiseSales.length > 0 && (
-          <CTable hover responsive bordered>
-            <CTableHead color="light">
-              <CTableRow>
-                <CTableHeaderCell>#</CTableHeaderCell>
-                <CTableHeaderCell>Date</CTableHeaderCell>
-                <CTableHeaderCell>Product</CTableHeaderCell>
-                <CTableHeaderCell>Quantity</CTableHeaderCell>
-                <CTableHeaderCell>Price/Unit</CTableHeaderCell>
-                <CTableHeaderCell>Total</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {datewiseSales.map((item, idx) => (
-                <CTableRow key={idx}>
-                  <CTableDataCell>{idx + 1}</CTableDataCell>
-                  <CTableDataCell>{item?.formatted_date}</CTableDataCell>
-                  <CTableDataCell>{item?.product_name}</CTableDataCell>
-                  <CTableDataCell>{item?.total_quantity_sold}</CTableDataCell>
-                  <CTableDataCell>₹{item?.product_unit}</CTableDataCell>
-                  <CTableDataCell>₹{item?.total_sales_amount}</CTableDataCell>
-                </CTableRow>
-              ))}
-            </CTableBody>
-          </CTable>
-        )} */}
       </div>
 
       {/* ----- Spinner & Errors ----- */}
@@ -224,13 +199,18 @@ function SalesReport() {
         </div>
       )}
       {error && <p className="text-red-500 text-center">{error}</p>}
+      {datewiseError && (
+        <p className="text-red-500 text-center">{datewiseError}</p>
+      )}
 
       {/* ----- Accordion Summary Section ----- */}
       {!loading && !error && datewiseSales?.length > 0 && (
         <CAccordion>
           {datewiseSales.map((item, index) => (
             <CAccordionItem key={index} itemKey={index}>
-              <CAccordionHeader onClick={() => toggleAccordion(item.product_id, index)}>
+              <CAccordionHeader
+                onClick={() => toggleAccordion(item.product_id, index)}
+              >
                 <div className="flex justify-between w-full px-4">
                   <div className="font-bold">{item?.product_name}</div>
                   <div>
@@ -274,7 +254,7 @@ function SalesReport() {
           <CAccordionItem itemKey="total">
             <CAccordionHeader>
               <div className="w-full text-right font-bold text-lg">
-                Total Monthly Spent: ₹{totalExpenses}
+                Total Spent: ₹{totalExpenses}
               </div>
             </CAccordionHeader>
           </CAccordionItem>
