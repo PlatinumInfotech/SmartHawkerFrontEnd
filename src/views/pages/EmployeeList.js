@@ -1,5 +1,4 @@
 import {
-  CButton,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -7,17 +6,17 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import React from 'react'
-import { AppHeader, AppSidebar } from '../../components'
-
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useParams, useLocation } from 'react-router-dom'
 import api from '../../services/useApi'
 
 function EmployeeList() {
   const [employees, setEmployees] = useState([])
   const { vendorId } = useParams()
+  const location = useLocation()
+
+  // ✅ Business name from navigate state
+  const businessName = location.state?.businessName || 'Business Name'
 
   useEffect(() => {
     api
@@ -27,14 +26,19 @@ function EmployeeList() {
         setEmployees(response.data.data)
       })
       .catch((error) => {
-        setError(error.message)
+        console.error(error.message)
       })
-  }, [])
+  }, [vendorId])
 
   return (
     <>
-      <div>
-        <CTable>
+      <div style={{ padding: '20px' }}>
+        {/* ✅ Show Business Name */}
+        <h3 style={{ marginBottom: '20px', fontWeight: 'bold', color: '#333' }}>
+          Employee List - {businessName}
+        </h3>
+
+        <CTable bordered hover responsive>
           <CTableHead color="light">
             <CTableRow>
               <CTableHeaderCell scope="col">#</CTableHeaderCell>
@@ -46,22 +50,14 @@ function EmployeeList() {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {employees.map((employees, index) => (
-              <CTableRow key={employees?.employees_id}>
+            {employees.map((emp, index) => (
+              <CTableRow key={emp?.employees_id}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                <CTableDataCell>{employees?.employee_name}</CTableDataCell>
-                <CTableDataCell>{employees?.employee_email}</CTableDataCell>
-                <CTableDataCell>{employees?.employee_mobile}</CTableDataCell>
-                <CTableDataCell>{employees?.employee_address}</CTableDataCell>
-                <CTableDataCell>{employees?.employee_role}</CTableDataCell>
-                <CTableDataCell className="flex gap-2">
-                  {/* <CButton color="primary" size="sm" className="me-2">
-                    View Employee
-                  </CButton>
-                  <CButton color="info" size="sm">
-                    View Customer
-                  </CButton> */}
-                </CTableDataCell>
+                <CTableDataCell>{emp?.employee_name}</CTableDataCell>
+                <CTableDataCell>{emp?.employee_email}</CTableDataCell>
+                <CTableDataCell>{emp?.employee_mobile}</CTableDataCell>
+                <CTableDataCell>{emp?.employee_address}</CTableDataCell>
+                <CTableDataCell>{emp?.employee_role}</CTableDataCell>
               </CTableRow>
             ))}
           </CTableBody>
@@ -70,4 +66,5 @@ function EmployeeList() {
     </>
   )
 }
+
 export default EmployeeList
