@@ -6,6 +6,10 @@ import { CContainer, CSpinner } from '@coreui/react'
 import routes from '../routes'
 
 const AppContent = () => {
+  // Get user type to determine home redirect
+  const userType = localStorage.getItem('userType') || 'admin'
+  const homeRoute = userType === 'vendor' ? '/vendor/dashboard' : '/dashboard'
+
   return (
     <CContainer className="px-4" lg>
       <Suspense fallback={<CSpinner color="primary" />}>
@@ -23,7 +27,8 @@ const AppContent = () => {
               )
             )
           })}
-          <Route path="/" element={<Navigate to="dashboard" replace />} />
+          {/* Dynamic home redirect based on user type */}
+          <Route path="/" element={<Navigate to={homeRoute} replace />} />
         </Routes>
       </Suspense>
     </CContainer>

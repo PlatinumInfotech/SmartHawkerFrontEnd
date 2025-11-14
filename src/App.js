@@ -1,28 +1,37 @@
 import React, { Suspense, useEffect } from 'react'
-import { BrowserRouter, HashRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { HashRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
-
-// We use those styles to show code examples, you should remove them in your application.
 import './scss/examples.scss'
-// import VendorList from './views/pages/VendorList';
 
 // Containers
 const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'))
+const VendorLogin = React.lazy(() => import('./views/pages/login/VendorLogin'))
 const Register = React.lazy(() => import('./views/pages/register/Register'))
 const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
 const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
-const Vendorlist = React.lazy(() => import('./views/pages/VendorList'))
-const CustomerList = React.lazy(() => import('./views/pages/CustomerList'))
-const EmployeeList = React.lazy(() => import('./views/pages/EmployeeList'))
-const ProductList = React.lazy(() => import('./views/pages/ProductList'))
 
-import ProtectedRoute from './ProtectedRoute'
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token')
+  const userType = localStorage.getItem('userType')
+
+  if (!token) {
+    // No token - redirect based on current path
+    const currentPath = window.location.hash
+    if (currentPath.includes('/vendor')) {
+      return <Navigate to="/vendor-login" replace />
+    }
+    return <Navigate to="/login" replace />
+  }
+
+  return children
+}
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -40,7 +49,7 @@ const App = () => {
     }
 
     setColorMode(storedTheme)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <HashRouter>
@@ -52,27 +61,22 @@ const App = () => {
         }
       >
         <Routes>
-          <Route exact path="/login" name="Login Page" element={<Login />} />
+          {/* Public Routes */}
+          <Route exact path="/login" name="Admin Login" element={<Login />} />
+          <Route exact path="/vendor-login" name="Vendor Login" element={<VendorLogin />} />
           <Route exact path="/register" name="Register Page" element={<Register />} />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
+
+          {/* Protected Routes - All wrapped in DefaultLayout */}
           <Route
             path="*"
-            element={localStorage.getItem('token') ? <DefaultLayout /> : <Navigate to="/login" />}
-          />
-
-          <Route
-            path="/vendorlist"
-            name="Vendorlist"
             element={
               <ProtectedRoute>
-                <Vendorlist />
+                <DefaultLayout />
               </ProtectedRoute>
             }
           />
-          <Route path="/customerlist" name="Customerlist" element={<CustomerList />} />
-          <Route path="/employeelist" name="Employeelist" element={<EmployeeList />} />
-          <Route path="/productlist" name="Productlist" element={<ProductList />} />
         </Routes>
       </Suspense>
     </HashRouter>

@@ -43,7 +43,7 @@ const WidgetsDropdown = (props) => {
 
   useEffect(() => {
     api
-      .get('/admin/dashboard/summary')
+      .get('/api/admin/dashboard/summary')
       .then((response) => {
         console.log(response.data, 'Hello')
         setData(response.data)

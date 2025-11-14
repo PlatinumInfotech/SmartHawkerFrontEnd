@@ -3,6 +3,14 @@ import CustomerList from './views/pages/CustomerList'
 import { element } from 'prop-types'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+// ✅ ADD THESE 5 IMPORTS
+const VendorDashboard = React.lazy(() => import('./views/vendor/Dashboard'))
+const VendorCustomerList = React.lazy(() => import('./views/vendor/CustomerList'))
+const VendorProductList = React.lazy(() => import('./views/vendor/ProductList'))
+const VendorSalesReport = React.lazy(() => import('./views/vendor/SalesReport'))
+const SubscriptionPlans = React.lazy(() => import('./views/vendor/SubscriptionPlans'))
+
+
 
 // Base
 const Accordion = React.lazy(() => import('./views/base/accordion/Accordion'))
@@ -104,6 +112,12 @@ const routes = [
   { path: '/employee-list/:vendorId', name: 'EmployeeList', element: EmployeeList },
   { path: '/product-list/:vendorId', name: 'ProductList', element: ProductList },
   { path: '/sales-report/:vendorId/:customerId', name: 'SalesReport', element: SalesReport },
+  // ✅ ADD THESE 5 LINES AT THE END
+  { path: '/vendor/dashboard', name: 'Vendor Dashboard', element: VendorDashboard },
+  { path: '/vendor/customers', name: 'My Customers', element: VendorCustomerList },
+  { path: '/vendor/products', name: 'My Products', element: VendorProductList },
+  { path: '/vendor/sales', name: 'Sales Report', element: VendorSalesReport },
+  { path: '/vendor/subscription', name: 'Subscription Plans', element: SubscriptionPlans }
 ]
 
 export default routes

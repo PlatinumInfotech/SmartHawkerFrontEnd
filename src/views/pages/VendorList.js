@@ -26,7 +26,7 @@ function VendorList() {
 
   useEffect(() => {
     api
-      .get('/admin/vendor-list')
+      .get('/api/admin/vendor-list')
       .then((response) => {
         setVendors(response.data.data)
       })
