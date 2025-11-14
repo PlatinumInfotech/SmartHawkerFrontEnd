@@ -22,7 +22,7 @@ function CustomerList() {
 
   const fetchMonthlySales = async () => {
     try {
-      const response = await api.get(`/admin/customer-list/${vendorId}`)
+      const response = await api.get(`/api/admin/customer-list/${vendorId}`)
       console.log(response.data.data)
       setCustomers(response.data.data)
     } catch (error) {

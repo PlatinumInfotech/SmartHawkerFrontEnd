@@ -20,7 +20,7 @@ function ProductList() {
 
   useEffect(() => {
     api
-      .get(`/admin/product-list/${vendorId}`)
+      .get(`/api/admin/product-list/${vendorId}`)
       .then((response) => {
         console.log(response.data.data, 'Hello')
         setProducts(response.data.data)

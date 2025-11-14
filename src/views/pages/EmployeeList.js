@@ -20,7 +20,7 @@ function EmployeeList() {
 
   useEffect(() => {
     api
-      .get(`/admin/employee-list/${vendorId}`)
+      .get(`/api/admin/employee-list/${vendorId}`)
       .then((response) => {
         console.log(response.data.data, 'Hello')
         setEmployees(response.data.data)
