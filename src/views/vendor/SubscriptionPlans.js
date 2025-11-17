@@ -106,10 +106,10 @@ const SubscriptionPlans = () => {
           );
 
           if (confirmRes.data.error) {
-            alert("Payment verification failed!");
+            setError("Payment verification failed!");
           } else {
-            alert("Subscription activated successfully!");
-            window.location.reload();
+            // Show success message and refresh data
+            fetchSubscriptionPlans();
           }
         },
 
