@@ -81,7 +81,7 @@ const SubscriptionPlans = () => {
         return;
       }
 
-      console.log("Razorpay Key:", import.meta.env.VITE_RAZORPAY_KEY_ID);
+      // 3. Open Razorpay Popup
       // 3. Open Razorpay Popup
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID, // frontend key
