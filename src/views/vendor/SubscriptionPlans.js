@@ -112,8 +112,8 @@ const SubscriptionPlans = () => {
         },
 
         prefill: {
-          name: "Vendor",
-          email: "vendor@example.com"
+          name: "Vendor"
+          // email should be fetched from user context or removed
         },
 
         theme: {
