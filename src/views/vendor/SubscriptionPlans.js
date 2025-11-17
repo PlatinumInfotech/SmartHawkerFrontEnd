@@ -69,7 +69,9 @@ const SubscriptionPlans = () => {
         "/api/vendor/create-subscription-order",
         {
           plan_id: plan.id,
-          plan_name: plan.plan_name,
+        {
+          plan_id: plan.id,
+          plan_name: plan.name,
           amount: plan.price
         }
       );
