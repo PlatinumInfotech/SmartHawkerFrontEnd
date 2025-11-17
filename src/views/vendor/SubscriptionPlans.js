@@ -59,7 +59,7 @@ const SubscriptionPlans = () => {
     // 1. Load Razorpay Checkout Script
     const isLoaded = await loadRazorpay();
     if (!isLoaded) {
-      alert("Unable to load Razorpay SDK. Check your internet connection.");
+      setError("Unable to load Razorpay SDK. Check your internet connection.");
       return;
     }
 
