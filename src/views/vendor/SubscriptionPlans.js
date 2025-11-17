@@ -77,7 +77,7 @@ const SubscriptionPlans = () => {
       const { order } = createOrderRes.data;
 
       if (!order) {
-        alert("Unable to create order");
+        setError("Unable to create order");
         return;
       }
 
