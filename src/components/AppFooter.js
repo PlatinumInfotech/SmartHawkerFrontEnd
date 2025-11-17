@@ -6,7 +6,7 @@ const AppFooter = () => {
     <CFooter className="px-4">
       <div>
         <a
-          href="https://play.google.com/store/apps/details?id=com.smarthawker.admin"
+          href="https://smarthawker.online/"
           target="_blank"
           rel="noopener noreferrer"
         >

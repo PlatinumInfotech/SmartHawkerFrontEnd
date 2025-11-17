@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 const api = axios.create({
-  //baseURL: 'http://shprod.platinum-infotech.com:3000/api',
-  baseURL: 'http://shcanary.platinum-infotech.com:3000',
+  baseURL: 'http://shprod.platinum-infotech.com:3000/api',
+  // baseURL: 'http://shcanary.platinum-infotech.com:3000',
   // baseURL: 'http://localhost:3000',
 })
 // ✅ MUST HAVE THIS INTERCEPTOR
