@@ -88,7 +88,7 @@ const SubscriptionPlans = () => {
         amount: order.amount,
         currency: "INR",
         name: "Smart Hawker Subscription",
-        description: `Plan: ${plan.plan_name}`,
+        description: `Plan: ${plan.name}`,
         order_id: order.id,
 
 
