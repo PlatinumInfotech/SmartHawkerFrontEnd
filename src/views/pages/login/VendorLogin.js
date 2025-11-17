@@ -200,7 +200,7 @@ const VendorLogin = () => {
           console.log('UserType:', localStorage.getItem('userType'))
 
           // Navigate to vendor dashboard
-          window.location.href = '/#/vendor/dashboard'  // Force reload to ensure proper routing
+          window.location.href = '/#/vendor/subscription'  // Force reload to ensure proper routing
         } else {
           setError('Login failed. Please try again.')
         }

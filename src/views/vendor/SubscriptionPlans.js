@@ -13,6 +13,8 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilCheckCircle, cilClock, cilStar } from '@coreui/icons'
 import api from '../../services/useApi'
+import { loadRazorpay } from "../../razorpay.js";
+
 
 const SubscriptionPlans = () => {
   const [plans, setPlans] = useState([])
@@ -53,11 +55,84 @@ const SubscriptionPlans = () => {
     }
   }
 
+  const handleBuyPlan = async (plan) => {
+    // 1. Load Razorpay Checkout Script
+    const isLoaded = await loadRazorpay();
+    if (!isLoaded) {
+      setError("Unable to load Razorpay SDK. Check your internet connection.");
+      return;
+    }
 
-  const handleSubscribe = async (planId) => {
-    // TODO: Integrate Razorpay payment
-    alert(`Subscribing to plan ${planId}. Payment integration coming soon!`)
-  }
+    try {
+      // 2. Create subscription order from backend
+      const createOrderRes = await api.post(
+        "/api/vendor/create-subscription-order",
+        {
+          plan_id: plan.id,
+        {
+          plan_id: plan.id,
+          plan_name: plan.name,
+          amount: plan.price
+        }
+      );
+
+      const { order } = createOrderRes.data;
+
+      if (!order) {
+        setError("Unable to create order");
+        return;
+      }
+
+      // 3. Open Razorpay Popup
+      // 3. Open Razorpay Popup
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // frontend key
+        amount: order.amount,
+        currency: "INR",
+        name: "Smart Hawker Subscription",
+        description: `Plan: ${plan.name}`,
+        order_id: order.id,
+
+
+        handler: async function (response) {
+          // 4. Payment success → confirm subscription
+          const confirmRes = await api.post(
+            "/api/vendor/confirm-subscription",
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            }
+          );
+
+          if (confirmRes.data.error) {
+            setError("Payment verification failed!");
+          } else {
+            // Show success message and refresh data
+            fetchSubscriptionPlans();
+          }
+        },
+
+        prefill: {
+          name: "Vendor"
+          // email should be fetched from user context or removed
+        },
+
+        theme: {
+          color: "#3399cc"
+        }
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+
+    } catch (err) {
+    } catch (err) {
+      console.error(err);
+      setError("Unable to start payment");
+    }
+  };
+
 
   if (loading) {
     return (
@@ -232,7 +307,7 @@ const SubscriptionPlans = () => {
                     <CButton
                       color={isExpired ? 'danger' : 'primary'}
                       block
-                      onClick={() => handleSubscribe(plan.id)}
+                      onClick={() => handleBuyPlan(plan)}
                     >
                       {isExpired ? 'Renew Now' : 'Subscribe'}
                     </CButton>
