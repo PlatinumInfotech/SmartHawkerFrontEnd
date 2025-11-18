@@ -67,8 +67,7 @@ const SubscriptionPlans = () => {
       // 2. Create subscription order from backend
       const createOrderRes = await api.post(
         "/api/vendor/create-subscription-order",
-        {
-          plan_id: plan.id,
+        
         {
           plan_id: plan.id,
           plan_name: plan.name,
