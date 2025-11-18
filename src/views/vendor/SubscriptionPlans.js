@@ -126,7 +126,6 @@ const SubscriptionPlans = () => {
       paymentObject.open();
 
     } catch (err) {
-    } catch (err) {
       console.error(err);
       setError("Unable to start payment");
     }
